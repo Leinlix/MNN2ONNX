@@ -37,12 +37,18 @@ target_include_directories(ONNX_Gen PUBLIC 3d_party/onnx)
 
 #source 
 include_directories(include)
-add_executable(mnn2onnx src/Options.cpp)
+add_executable(mnn2onnx 
+    src/Convertor.cpp
+    src/ConvertorScope.cpp
+    src/OPConvertor.cpp
+    src/Options.cpp)
 
 target_link_libraries(mnn2onnx PUBLIC ${Protobuf_LIBRARIES})
 
 target_link_libraries(mnn2onnx PRIVATE flatbuffers)
 
 target_link_libraries(mnn2onnx PRIVATE MNN_Gen)
+
+target_link_libraries(ONNX_Gen PUBLIC ${Protobuf_LIBRARIES})
 
 target_link_libraries(mnn2onnx PRIVATE ONNX_Gen)

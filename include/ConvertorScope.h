@@ -4,6 +4,8 @@
 #include "vector"
 
 namespace LLX {
+#ifndef LLX_ConvertorScope_h
+#define LLX_ConvertorScope_h
     class ConvertorScope
     {
     private:
@@ -33,4 +35,5 @@ namespace LLX {
         void pushValue(onnx::ValueInfoProto *val);
         void buildGraph();
     };
+#endif
 }

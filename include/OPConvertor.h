@@ -22,8 +22,8 @@ namespace LLX{
         static OPConvertor *sharedInstance();
         OPConvertorManager();
         void registerNodeConvertor(MNN::OpType op_type, OPConvertor *OPConvertor);
-        void convertToNode(MNN::OpT op, onnx::NodeProto* node, ConvertorScope *scope);
-        void convertAfter(MNN::OpT op, onnx::NodeProto *node, ConvertorScope *scope);
+        void convertToNode(MNN::OpT *op, onnx::NodeProto* node, ConvertorScope *scope);
+        void convertAfter(MNN::OpT *op, onnx::NodeProto *node, ConvertorScope *scope);
     private:
         static OPConvertorManager *manager;
         std::map<MNN::OpType , OPConvertor *>convertor_map;
