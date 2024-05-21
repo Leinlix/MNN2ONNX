@@ -15,11 +15,14 @@ namespace LLX{
         virtual ~OPConvertor(){};
         static onnx::TensorProto_DataType convertDataType(MNN::DataType type);
         static onnx::TensorProto * convertBlobToTensor(const MNN::BlobT *blob);
+        static onnx::ValueInfoProto * valueInfoProtoFromInitialzer(onnx::TensorProto * tensor);
+        static onnx::TensorProto * tensorProtoFromOp(MNN::OpT *op);
+        static onnx::ValueInfoProto * valueInfoProtoFromArgs(const std::string &name,  int type, int dim_size , std::vector<int> dims );
     };
     
     class OPConvertorManager{
     public:
-        static OPConvertor *sharedInstance();
+        static OPConvertorManager *sharedInstance();
         OPConvertorManager();
         void registerNodeConvertor(MNN::OpType op_type, OPConvertor *OPConvertor);
         void convertToNode(MNN::OpT *op, onnx::NodeProto* node, ConvertorScope *scope);

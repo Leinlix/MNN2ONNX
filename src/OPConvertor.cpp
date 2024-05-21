@@ -67,6 +67,44 @@ namespace LLX{
         return tensor;
     }
 
+#pragma mark - OPConvertorManager
+
+    OPConvertorManager * OPConvertorManager::manager = nullptr;
+    OPConvertorManager * OPConvertorManager::sharedInstance(){
+        if (manager == nullptr)
+        {
+            manager = new OPConvertorManager();
+        }
+        return manager;
+    }
+
+    onnx::ValueInfoProto * OPConvertor::valueInfoProtoFromArgs(const std::string &name, int type, int dim_size , std::vector<int> dims ){
+        onnx::ValueInfoProto * value = new onnx::ValueInfoProto();
+        value->set_name(name);
+        value->mutable_type()->mutable_tensor_type()->set_elem_type(type);
+        auto shape = value->mutable_type()->mutable_tensor_type()->mutable_shape();
+        for(int i = 0 ; i < dim_size; i++){
+            shape->add_dim()->set_dim_value(dims[i]);
+        }
+        return value;
+    }
+
+    onnx::ValueInfoProto * OPConvertor::valueInfoProtoFromInitialzer(onnx::TensorProto * tensor){
+        std::vector<int> dims;
+        for(int i = 0 ; i < tensor->dims().size(); i++){
+            dims.push_back(tensor->dims(i));
+        }
+        auto  value = valueInfoProtoFromArgs((std::string)tensor->name() ,tensor->data_type(), tensor->dims().size(),dims);
+        return value;
+    }
+
+    onnx::TensorProto * OPConvertor::tensorProtoFromOp(MNN::OpT *op){
+        auto op_param = op->main.value;
+        onnx::TensorProto *init = LLX::OPConvertor::convertBlobToTensor((MNN::BlobT *)op_param);
+        init->set_name(op->name);
+        return init;
+    }
+
     OPConvertorManager::OPConvertorManager(){
         // add register
     }
