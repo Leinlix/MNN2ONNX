@@ -9,7 +9,7 @@ SET(CMAKE_BUILD_TYPE "Debug")
 
 #flatbuffers
 add_subdirectory(3d_party/flatbuffers
-    ${CMAke_CURRENT_BINARY_DIR}/flatbuffers-build
+    ${CMAKE_CURRENT_BINARY_DIR}/flatbuffers-build
     EXCLUDE_FROM_ALL)
 include_directories(3d_party/flatbuffers/include)
 

@@ -188,7 +188,7 @@ namespace LLX{
                                 std::vector<int>di ;
                                 for(int j = 0 ; j < input_2->type().tensor_type().shape().dim_size(); j++){
                                     if(j == axis->axis){
-                                        di.push_back(input_2->type().tensor_type().shape().dim()[j].dim_value() + p->type().tensor_type().shape().dim()[j].dim_value() )
+                                        di.push_back(input_2->type().tensor_type().shape().dim()[j].dim_value() + p->type().tensor_type().shape().dim()[j].dim_value());
                                     }else{
                                         di.push_back(input_2->type().tensor_type().shape().dim()[j].dim_value());
                                     }
