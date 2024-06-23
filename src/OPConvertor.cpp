@@ -107,6 +107,11 @@ namespace LLX{
 
     OPConvertorManager::OPConvertorManager(){
         // add register
+        REGISTER_OP_CONVERTOR(MNN::OpType_ArgMax ,ArgMaxOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_ArgMin, ArgMinOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_BinaryOp, BinaryOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_ConvolutionDepthwise, ConvolutionDepthwiseOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_Convolution, ConvolutionOPConvertor)
     }
 
     void OPConvertorManager::registerNodeConvertor(MNN::OpType op_type , OPConvertor * op_convertor){

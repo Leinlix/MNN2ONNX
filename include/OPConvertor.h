@@ -40,8 +40,12 @@ public:                                     \
 };
 
 #define REGISTER_OP_CONVERTOR(OPType, OPName)   \
-registerNodeConvertor(OPTyPE, new OPName());
+registerNodeConvertor(OPType, new OPName());
 
 #pragma mark op class declaration
-
+DECLARE_OP_CONVERTOR(ArgMaxOPConvertor)
+DECLARE_OP_CONVERTOR(ArgMinOPConvertor)
+DECLARE_OP_CONVERTOR(BinaryOPConvertor)
+DECLARE_OP_CONVERTOR(ConvolutionDepthwiseOPConvertor)
+DECLARE_OP_CONVERTOR(ConvolutionOPConvertor)
 }

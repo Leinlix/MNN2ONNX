@@ -38,8 +38,13 @@ target_include_directories(ONNX_Gen PUBLIC 3d_party/onnx)
 #source 
 include_directories(include)
 add_executable(mnn2onnx 
+    src/ArgMaxOPConvertor.cpp
+    src/ArgMinOPConvertor.cpp
+    src/BinaryOPConvertor.cpp
     src/Convertor.cpp
     src/ConvertorScope.cpp
+    src/ConvolutionDepthwiseOPConvertor.cpp
+    src/ConvolutionOPConvertor.cpp
     src/OPConvertor.cpp
     src/Options.cpp)
 
