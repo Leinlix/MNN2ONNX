@@ -2,7 +2,7 @@
 
 namespace LLX{
     void ConvolutionOPConvertor::run(onnx::NodeProto *onnx_node , MNN::OpT *src_op, ConvertorScope *scope){
-        MNN::Convolution2DT * param = src_op->main.value;
+        MNN::Convolution2DT * param = (MNN::Convolution2DT *)src_op->main.value;
         onnx_node->set_op_type("Conv");
 
         auto kernel_shape = onnx_node->add_attribute();

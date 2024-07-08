@@ -41,12 +41,21 @@ add_executable(mnn2onnx
     src/ArgMaxOPConvertor.cpp
     src/ArgMinOPConvertor.cpp
     src/BinaryOPConvertor.cpp
+    src/CastOPConvertor.cpp
     src/Convertor.cpp
     src/ConvertorScope.cpp
+    src/ConvertTensorOPConvertor.cpp
     src/ConvolutionDepthwiseOPConvertor.cpp
     src/ConvolutionOPConvertor.cpp
+    src/InterpOPConvertor.cpp
     src/OPConvertor.cpp
-    src/Options.cpp)
+    src/Options.cpp
+    src/PoolingOPConvertor.cpp
+    src/ReluOPConvertor.cpp
+    src/SeluOPConvertor.cpp
+    src/SigmoidOPConvertor.cpp
+    src/UnaryOPConvertor.cpp
+)
 
 target_link_libraries(mnn2onnx PUBLIC ${Protobuf_LIBRARIES})
 

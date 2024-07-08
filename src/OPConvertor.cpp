@@ -110,8 +110,17 @@ namespace LLX{
         REGISTER_OP_CONVERTOR(MNN::OpType_ArgMax ,ArgMaxOPConvertor)
         REGISTER_OP_CONVERTOR(MNN::OpType_ArgMin, ArgMinOPConvertor)
         REGISTER_OP_CONVERTOR(MNN::OpType_BinaryOp, BinaryOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_Cast, CastOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_ConvertTensor, ConvertTensorOPConvertor)
         REGISTER_OP_CONVERTOR(MNN::OpType_ConvolutionDepthwise, ConvolutionDepthwiseOPConvertor)
         REGISTER_OP_CONVERTOR(MNN::OpType_Convolution, ConvolutionOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_Interp, InterpOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_Pooling, PoolingOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_Pooling3D, PoolingOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_ReLU, ReluOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_Selu, SeluOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_Sigmoid, SigmoidOPConvertor)
+        REGISTER_OP_CONVERTOR(MNN::OpType_UnaryOp, UnaryOPConvertor)
     }
 
     void OPConvertorManager::registerNodeConvertor(MNN::OpType op_type , OPConvertor * op_convertor){
@@ -134,6 +143,89 @@ namespace LLX{
     }
 
     void OPConvertorManager::convertAfter(MNN::OpT *op, onnx::NodeProto *node , ConvertorScope *scope){
-        // wait to add 
+        if(MNN::OpType_Convolution == op->type || MNN::OpType_ConvolutionDepthwise == op->type){
+            MNN::Convolution2DT *param = (MNN::Convolution2DT *)op->main.value;
+            if(param->common->relu){
+                // find ouput value 
+                auto node_output_name = node->input(0);
+                auto val =  scope->findValueInfoByName(node_output_name);
+                // build relu node 
+                auto relu = new onnx::NodeProto();
+                auto relu_n = op->name + "/relu";
+                relu->set_name(relu_n);
+                relu->set_op_type("Relu");
+                // build relu input 
+                auto relu_i_n = relu_n + "_input";
+                std::vector<int> dims;
+                int dim_size = val->type().tensor_type().shape().dim_size();
+                for(int i = 0 ; i < dim_size; i++){
+                    dims.push_back(val->type().tensor_type().shape().dim(i).dim_value());
+                }
+                auto relu_input = OPConvertor::valueInfoProtoFromArgs(relu_i_n, onnx::TensorProto_DataType_FLOAT,dim_size, dims);
+                scope->pushValue(relu_input);
+                scope->pushNode(relu);
+                // change output
+                node->clear_output();
+                node->add_output(relu_i_n);
+                relu->add_input(relu_i_n);
+                relu->add_output(node_output_name);
+            }else if (param->common->relu6){
+                // find ouput value 
+                auto node_output_name = node->input(0);
+                auto val =  scope->findValueInfoByName(node_output_name);
+                // insert clip node 
+                auto clip = new onnx::NodeProto();
+                auto clip_n = op->name + "/clip";
+                clip->set_name(clip_n);
+                clip->set_op_type("Clip");
+                // add input 
+                auto name_min = clip_n + "_min";
+                auto name_max = clip_n + "_max";
+                std::vector<int> dims_max, dims_min;
+                dims_max.push_back(1);
+                dims_min.push_back(1);
+                auto clip_min = OPConvertor::valueInfoProtoFromArgs(name_min, onnx::TensorProto_DataType_FLOAT, 1, dims_min);
+                auto clip_max = OPConvertor::valueInfoProtoFromArgs(name_max, onnx::TensorProto_DataType_FLOAT, 1, dims_max);
+                // initializer 
+                auto min_init = new onnx::TensorProto();
+                min_init->set_name(name_min);
+                min_init->set_data_type(onnx::TensorProto_DataType_FLOAT);
+                min_init->add_float_data(0.0);
+                auto max_init = new onnx::TensorProto();
+                max_init->set_name(name_max);
+                max_init->set_data_type(onnx::TensorProto_DataType_FLOAT);
+                max_init->add_float_data(6.0);
+                // value info 
+                auto clip_i_n = clip_n + "_input";
+                std::vector<int> dims;
+                int dim_size = val->type().tensor_type().shape().dim_size();
+                for(int i = 0 ; i < dim_size; i++){
+                    dims.push_back(val->type().tensor_type().shape().dim(i).dim_value());
+                }
+                auto clip_input = OPConvertor::valueInfoProtoFromArgs(clip_i_n,onnx::TensorProto_DataType_FLOAT, dim_size, dims);
+                scope->pushInitializer(min_init);
+                scope->pushInitializer(max_init);
+                scope->pushValue(clip_input);
+                scope->pushNode(clip);
+                // change output
+                node->clear_output();
+                node->add_output(clip_i_n);
+                clip->add_input(clip_i_n);
+                clip->add_input(name_min);
+                clip->add_input(name_max);
+                clip->add_output(node_output_name);
+            }
+        }else if (MNN::OpType_Interp == op->type){
+            // change the order of inputs
+            auto a = node->input(0);
+            auto b = node->input(1);
+            auto c = node->input(2);
+            auto d = node->input(3);
+            node->clear_input();
+            node->add_input(a);
+            node->add_input(c);
+            node->add_input(d);
+            node->add_input(b);
+        }
     }
 }

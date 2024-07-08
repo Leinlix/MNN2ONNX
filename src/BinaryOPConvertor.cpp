@@ -31,7 +31,7 @@ namespace LLX {
         if (param->opType == MNN::BinaryOpOperation_MOD)
         {       
             auto fmod = onnx_node->add_attribute();
-            fmod->set_name('fmod');
+            fmod->set_name("fmod");
             fmod->set_type(onnx::AttributeProto_AttributeType_INT);
             fmod->set_i(0);
         }
@@ -40,21 +40,21 @@ namespace LLX {
         {
             auto fmod = onnx_node->add_attribute();
             fmod->set_type(onnx::AttributeProto_AttributeType_INT);
-            fmod->set_name('fmod');
+            fmod->set_name("fmod");
             fmod->set_i(0);
         }
 
         if(param->opType == MNN::BinaryOpOperation_LEFTSHIFT){
             auto shift = onnx_node->add_attribute();
             shift->set_type(onnx::AttributeProto_AttributeType_STRING);
-            shift->set_name('direction');
+            shift->set_name("direction");
             shift->set_s("LEFT");
         }
         
         if(param->opType == MNN::BinaryOpOperation_LEFTSHIFT){
             auto shift = onnx_node->add_attribute();
             shift->set_type(onnx::AttributeProto_AttributeType_STRING);
-            shift->set_name('direction');
+            shift->set_name("direction");
             shift->set_s("RIGHT");
         }
     }
